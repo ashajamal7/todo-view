@@ -8,7 +8,11 @@
   <body>
     <header>
       <h1>Todo Application</h1>
-      <p>Visit count: <%= @visit_count %></p>
+      <div>
+        <p><%= @greeting %>!</p>
+        <p>Page visits: <%= @visit_count %></p>
+        <p>Total visits: <%= @total_visits %></p>
+      </div>
     </header>
 
     <main>
@@ -16,7 +20,41 @@
     </main>
 
     <footer>
-      <p>Last visited: <%= session[:last_visited] %></p>
+      <p>Last visited: <span id="last-visited">just now</span></p>
     </footer>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const element = document.getElementById('last-visited');
+        const now = new Date();
+        const lastVisit = localStorage.getItem('lastVisit');
+        
+        if (lastVisit) {
+          const lastVisitTime = new Date(parseInt(lastVisit));
+          const seconds = Math.floor((now - lastVisitTime) / 1000);
+          
+          // Format the time difference
+          let timeAgo;
+          if (seconds < 60) {
+            timeAgo = 'just now';
+          } else if (seconds < 3600) {
+            const minutes = Math.floor(seconds / 60);
+            timeAgo = `${minutes} minute${minutes === 1 ? '' : 's'} ago`;
+          } else if (seconds < 86400) {
+            const hours = Math.floor(seconds / 3600);
+            timeAgo = `${hours} hour${hours === 1 ? '' : 's'} ago`;
+          } else {
+            const days = Math.floor(seconds / 86400);
+            timeAgo = `${days} day${days === 1 ? '' : 's'} ago`;
+          }
+          
+          element.textContent = timeAgo;
+        } else {
+          element.textContent = 'just now';
+        }
+        
+        // Store current visit time
+        localStorage.setItem('lastVisit', now.getTime().toString());
+      });
+    </script>
   </body>
 </html>
